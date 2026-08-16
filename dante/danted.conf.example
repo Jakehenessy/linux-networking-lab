@@ -1,0 +1,109 @@
+# ============================================================
+# Dante SOCKS5 Proxy — Sanitized Configuration Example
+# ============================================================
+#
+# This configuration is based on my personal Linux VPS setup.
+#
+# Real client IP addresses have been replaced with addresses
+# reserved for documentation and examples.
+#
+# No production credentials or private information are stored
+# in this repository.
+# ============================================================
+
+
+# ------------------------------------------------------------
+# Logging
+# ------------------------------------------------------------
+
+logoutput: syslog
+
+
+# ------------------------------------------------------------
+# Network interfaces
+# ------------------------------------------------------------
+
+# Dante accepts SOCKS connections on all available interfaces
+# using TCP port 1080.
+
+internal: 0.0.0.0 port = 1080
+
+# Public network interface of the VPS.
+# Interface name may differ between hosting providers.
+
+external: ens3
+
+
+# ------------------------------------------------------------
+# Authentication
+# ------------------------------------------------------------
+
+# Access to this proxy is controlled by source IP allowlisting.
+# No username/password authentication is used in this example.
+
+clientmethod: none
+socksmethod: none
+
+
+# ------------------------------------------------------------
+# Process privileges
+# ------------------------------------------------------------
+
+user.privileged: proxy
+user.unprivileged: nobody
+
+
+# ============================================================
+# CLIENT A — AUTO-MY-PC
+# ============================================================
+#
+# The address below is an example only.
+#
+# In the production setup this /32 address was automatically
+# updated when the client's public IP changed.
+# ============================================================
+
+client pass {
+    from: 203.0.113.10/32 to: 0.0.0.0/0
+    log: connect disconnect error
+}
+
+socks pass {
+    from: 203.0.113.10/32 to: 0.0.0.0/0
+    command: connect
+    log: connect disconnect error
+}
+
+
+# ============================================================
+# CLIENT B — AUTO-FRIEND-PC
+# ============================================================
+#
+# This client had its own independent allowlist entry.
+#
+# Updating Client A therefore did not overwrite Client B,
+# and vice versa.
+# ============================================================
+
+client pass {
+    from: 203.0.113.20/32 to: 0.0.0.0/0
+    log: connect disconnect error
+}
+
+socks pass {
+    from: 203.0.113.20/32 to: 0.0.0.0/0
+    command: connect
+    log: connect disconnect error
+}
+
+
+# ============================================================
+# DEFAULT POLICY
+# ============================================================
+#
+# Connections that do not match one of the explicit "pass"
+# rules above are not permitted to use the proxy.
+#
+# This keeps the SOCKS5 service restricted to authorized
+# client IP addresses rather than exposing an open proxy.
+# ============================================================
