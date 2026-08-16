@@ -1,0 +1,70 @@
+# ============================================================
+# Hysteria 2 Server — Sanitized Configuration Example
+# ============================================================
+#
+# This configuration is based on my personal Hysteria 2
+# deployment on an Ubuntu VPS.
+#
+# Production domain names, authentication credentials,
+# obfuscation passwords, server IP addresses and private keys
+# have been removed.
+# ============================================================
+
+
+# ------------------------------------------------------------
+# Listener
+# ------------------------------------------------------------
+
+listen: :443
+
+
+# ------------------------------------------------------------
+# TLS
+# ------------------------------------------------------------
+#
+# TLS certificates were issued by Let's Encrypt using Certbot.
+# The production domain is replaced with example.com.
+#
+
+tls:
+  cert: /etc/letsencrypt/live/example.com/fullchain.pem
+  key: /etc/letsencrypt/live/example.com/privkey.pem
+
+
+# ------------------------------------------------------------
+# Authentication
+# ------------------------------------------------------------
+#
+# The production authentication password is not published.
+#
+
+auth:
+  type: password
+  password: CHANGE_ME_AUTH_PASSWORD
+
+
+# ------------------------------------------------------------
+# Obfuscation
+# ------------------------------------------------------------
+#
+# Salamander obfuscation was enabled on the server.
+#
+# The same obfuscation password must also be configured
+# on authorized clients.
+#
+
+obfs:
+  type: salamander
+  salamander:
+    password: CHANGE_ME_OBFS_PASSWORD
+
+
+# ------------------------------------------------------------
+# Masquerade
+# ------------------------------------------------------------
+
+masquerade:
+  type: proxy
+  proxy:
+    url: https://news.ycombinator.com/
+    rewriteHost: true
