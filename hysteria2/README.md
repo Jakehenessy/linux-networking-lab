@@ -4,7 +4,7 @@
 
 I deployed and maintained a Hysteria 2 server on an Ubuntu VPS for personal use.
 
-The project included Linux server administration, domain and DNS configuration, TLS certificates, authentication, HTTP/3 masquerading, systemd service management and client connectivity troubleshooting.
+The project included Linux server administration, domain and DNS configuration, TLS certificates, password authentication, Salamander traffic obfuscation, masquerading, systemd service management and client connectivity troubleshooting.
 
 The server was configured to provide encrypted connectivity for Windows and Android client devices.
 
@@ -17,6 +17,7 @@ Windows / Android Clients
           |
           | Hysteria 2
           | QUIC / UDP 443
+          | Salamander Obfuscation
           v
       Ubuntu VPS
           |
@@ -25,6 +26,10 @@ Windows / Android Clients
           +--- TLS Certificate
           |
           +--- Domain / DNS
+          |
+          +--- Password Authentication
+          |
+          +--- Masquerade
           |
           +--- systemd
           |
@@ -36,23 +41,23 @@ Windows / Android Clients
 
 ## What I Configured
 
-- Ubuntu Server 24.04
-- KVM VPS/VDS
-- SSH administration
-- Domain and DNS A record
-- Hysteria 2 server
-- UDP port 443
-- TLS certificates
-- Let's Encrypt
-- Certbot
-- Password authentication
-- HTTP/3 masquerading
-- Salamander traffic obfuscation
-- systemd service management
-- Windows client connectivity
-- Android client connectivity
-- Network socket diagnostics
-- Service and configuration troubleshooting
+* Ubuntu Server 24.04
+* KVM VPS/VDS
+* SSH administration
+* Domain and DNS A record
+* Hysteria 2 server
+* UDP port 443
+* TLS certificates
+* Let's Encrypt
+* Certbot
+* Password authentication
+* Salamander traffic obfuscation
+* Masquerade in reverse proxy mode
+* systemd service management
+* Windows client connectivity
+* Android client connectivity
+* Network socket diagnostics
+* Service and configuration troubleshooting
 
 ---
 
@@ -67,7 +72,8 @@ Conceptually:
 ```text
 Client
   |
-  | UDP / QUIC
+  | Hysteria 2
+  | QUIC / UDP
   v
 VPS:443
   |
@@ -75,7 +81,7 @@ VPS:443
 Hysteria 2 Server
 ```
 
-Using UDP port `443` allowed the service to operate on the standard HTTP/3 port.
+Using UDP port `443` provided a standard and convenient network endpoint for client connections.
 
 ---
 
@@ -137,6 +143,8 @@ The production password is intentionally excluded from this repository.
 
 The example configuration uses a placeholder value instead.
 
+---
+
 ## Traffic Obfuscation
 
 The server used Hysteria 2's Salamander obfuscation layer.
@@ -161,16 +169,16 @@ This gave me practical experience with configuring and troubleshooting an additi
 
 ---
 
-## HTTP/3 Masquerading
+## Masquerade
 
-Hysteria was configured with HTTP/3 masquerading using reverse proxy mode.
+Hysteria was configured with its masquerade feature in reverse proxy mode.
 
-Instead of returning a proxy-specific response to ordinary HTTP/3 requests, the server could respond with content proxied from a regular website.
+The server used a regular website as the upstream target for masqueraded requests.
 
 The configuration used a structure similar to:
 
 ```text
-Incoming HTTP/3 request
+Masqueraded request
           |
           v
      Hysteria 2
@@ -179,10 +187,12 @@ Incoming HTTP/3 request
   Reverse Proxy Mode
           |
           v
- Regular Web Content
+  Upstream Website
 ```
 
-This was configured using Hysteria's `masquerade` feature.
+This was configured using Hysteria's `masquerade` feature with `type: proxy`.
+
+The production configuration used a public website as the upstream target.
 
 ---
 
@@ -229,9 +239,10 @@ The troubleshooting workflow included checking:
 3. UDP listener
 4. DNS resolution
 5. TLS configuration
-6. Authentication configuration
-7. Client configuration
-8. Actual client connectivity
+6. Salamander obfuscation settings
+7. Authentication configuration
+8. Client configuration
+9. Actual client connectivity
 
 ---
 
@@ -241,10 +252,10 @@ The server was used with multiple client devices.
 
 Clients included:
 
-- Windows
-- Android
+* Windows
+* Android
 
-The client applications connected to the Hysteria 2 server using the configured domain, TLS and authentication credentials.
+The client applications connected to the Hysteria 2 server using the configured domain, TLS, Salamander obfuscation and authentication credentials.
 
 This also gave me experience troubleshooting cases where the server service itself was running correctly but a client could still not establish a connection.
 
@@ -256,11 +267,12 @@ The Hysteria server configuration was maintained as a YAML file.
 
 The production configuration contained:
 
-- UDP listener
-- TLS certificate path
-- TLS private key path
-- Authentication settings
-- Masquerade configuration
+* UDP listener
+* TLS certificate path
+* TLS private key path
+* Authentication settings
+* Salamander obfuscation settings
+* Masquerade configuration
 
 The repository contains only a sanitized example.
 
@@ -293,6 +305,9 @@ Check DNS
 Check TLS
         |
         v
+Check Salamander settings
+        |
+        v
 Check authentication
         |
         v
@@ -302,7 +317,7 @@ Check client configuration
 Test connection again
 ```
 
-This approach helped determine whether the issue existed on the client, network or server side.
+This approach helped determine whether the issue existed on the client, DNS, network transport or server side.
 
 ---
 
@@ -312,13 +327,14 @@ The final setup provided working Hysteria 2 connectivity from Windows and Androi
 
 The server used:
 
-- A custom domain
-- DNS
-- UDP port 443
-- TLS certificates
-- Password authentication
-- HTTP/3 masquerading
-- systemd service management
+* A custom domain
+* DNS
+* UDP port 443
+* TLS certificates
+* Password authentication
+* Salamander traffic obfuscation
+* Masquerade in reverse proxy mode
+* systemd service management
 
 The service was configured to run automatically and could be monitored and troubleshot using standard Linux tools.
 
@@ -328,30 +344,30 @@ The service was configured to run automatically and could be monitored and troub
 
 This project gave me practical experience with:
 
-- Linux server administration
-- Ubuntu Server
-- VPS/VDS
-- SSH
-- systemd
-- DNS
-- UDP
-- QUIC
-- HTTP/3
-- TLS
-- Let's Encrypt
-- Certbot
-- YAML configuration
-- Network sockets
-- Service logs
-- Client/server troubleshooting
-- Hysteria 2
+* Linux server administration
+* Ubuntu Server
+* VPS/VDS
+* SSH
+* systemd
+* DNS
+* UDP
+* QUIC
+* TLS
+* Let's Encrypt
+* Certbot
+* YAML configuration
+* Traffic obfuscation
+* Network sockets
+* Service logs
+* Client/server troubleshooting
+* Hysteria 2
 
 ---
 
 ## Repository Files
 
-- `config.yaml.example` — sanitized Hysteria 2 server configuration
-- `operations.md` — service management and troubleshooting notes
+* `config.yaml.example` — sanitized Hysteria 2 server configuration
+* `operations.md` — service management and troubleshooting notes
 
 ---
 
@@ -361,11 +377,12 @@ This repository contains sanitized documentation and configuration examples only
 
 The following production information is intentionally excluded:
 
-- VPS public IP address
-- Real domain name
-- Authentication password
-- TLS private key
-- SSH keys
-- Server credentials
-- Active connection URI
-- Any other production secrets
+* VPS public IP address
+* Real domain name
+* Authentication password
+* Salamander obfuscation password
+* TLS private key
+* SSH keys
+* Server credentials
+* Active connection URI
+* Any other production secrets
