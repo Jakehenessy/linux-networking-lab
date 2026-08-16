@@ -14,13 +14,16 @@ The main challenge was that client machines used dynamic public IP addresses.
 I implemented an automated client-to-server update flow so the allowlist could be updated when a client's public IP changed, without manually editing the Dante configuration.
 
 **Implemented:**
-- Dante SOCKS proxy deployment
-- IP-based access control
-- Dynamic public IP handling
-- SSH-based update flow
-- Windows-side automation
+- Hysteria 2 deployment on Linux
+- UDP/443 listener
+- Domain and DNS configuration
+- TLS certificates with Let's Encrypt
+- Password authentication
+- Salamander traffic obfuscation
+- HTTP/3 masquerading
 - systemd service management
-- Network and service troubleshooting
+- Client connections from Windows and Android
+- Service, log and socket troubleshooting
 
 [View Dante project](./dante/)
 
