@@ -47,6 +47,7 @@ Windows / Android Clients
 - Certbot
 - Password authentication
 - HTTP/3 masquerading
+- Salamander traffic obfuscation
 - systemd service management
 - Windows client connectivity
 - Android client connectivity
@@ -135,6 +136,28 @@ A client had to provide the correct authentication value before being allowed to
 The production password is intentionally excluded from this repository.
 
 The example configuration uses a placeholder value instead.
+
+## Traffic Obfuscation
+
+The server used Hysteria 2's Salamander obfuscation layer.
+
+Both the server and authorized clients were configured with the same separate obfuscation password.
+
+Conceptually:
+
+```text
+Hysteria 2 traffic
+        |
+        v
+Salamander obfuscation
+        |
+        v
+UDP transport
+```
+
+The production obfuscation password is intentionally excluded from this repository.
+
+This gave me practical experience with configuring and troubleshooting an additional transport obfuscation layer on both the server and client sides.
 
 ---
 
